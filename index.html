@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Cache-Control" content="no-cache"/>
+	
+	<script>
+		//пример рисования произвольного множества точек
+		function example1() {
+			//получаем html-элемент типа canvas и его характеристики
+			var canvas = document.getElementById("canvas1");
+			var canvasHeight = parseInt(canvas.getAttribute("height"));
+			var canvasWidth = parseInt(canvas.getAttribute("width"));
+			
+			//создаем 2d context
+			var context = canvas.getContext('2d');
+			
+			//создаем "буфер" imageData, в который будем класть новую информацию о цветах
+			var imageData = context.createImageData(canvasWidth, canvasHeight);
+			for (var i = 0; i < canvasWidth; i++) {
+				for (var j = 0; j < canvasHeight; j++) {
+					var red = 0;
+					var green = 0;
+					var blue = (i + j) % 255;
+					if (i % 20 == 0)
+						red = 150;
+					if (j % 20 == 0)
+						green = 150;
+					var opacity = 255;
+					
+					imageData.data[4*(i + canvasWidth*j) + 0] = red;
+					imageData.data[4*(i + canvasWidth*j) + 1] = green;
+					imageData.data[4*(i + canvasWidth*j) + 2] = blue;
+					imageData.data[4*(i + canvasWidth*j) + 3] = opacity;
+				}
+			}
+			//заполненный "буфер" imageData передаем в context для вывода на экран
+			context.putImageData(imageData, 0, 0);
+		}
+		
+		//пример рисования отдельных линий
+		function example2() {
+			//получаем html-элемент типа canvas и его характеристики
+			var canvas = document.getElementById("canvas2");
+			var canvasHeight = parseInt(canvas.getAttribute("height"));
+			var canvasWidth = parseInt(canvas.getAttribute("width"));
+			
+			//создаем 2d context
+			var context = canvas.getContext('2d');
+			
+			//задаем стиль линий
+			context.lineWidth = "5";
+			context.strokeStyle = "green";
+			
+			//начинаем создание нового пути
+			context.beginPath(); 
+			//задаем начальную точку линии
+			context.moveTo(0, 75);
+			//задаем конечную точку линии и добавляем линию в путь
+			context.lineTo(150, 100);
+			//выводим путь на экран
+			context.stroke();
+		}
+		
+		//пример рисования полилиний (сначала вычисляем точки, затем рисуем)
+		function example3() {
+			//получаем html-элемент типа canvas и его характеристики
+			var canvas = document.getElementById("canvas3");
+			var canvasHeight = parseInt(canvas.getAttribute("height"));
+			var canvasWidth = parseInt(canvas.getAttribute("width"));
+			
+			//создаем 2d context
+			var context = canvas.getContext('2d');
+			
+			//задаем стиль линий
+			context.lineWidth = "2";
+			context.strokeStyle = "#FF0000";
+			
+			//создаем массив точек
+			//в качестве точек используются анонимные объекты со свойствами x и y
+			var points = [{x: 20, y: 50}, {x: 120, y: 50}, {x: 120, y: 100}, {x: 50, y: 20}];
+			
+			//начинаем создание нового пути
+			context.beginPath(); 
+			//добавляем в путь все точки из массива
+			for (var i = 0; i < points.length; i++) {
+				var point = points[i];
+			    if (i == 0)
+					context.moveTo(point.x, point.y);
+				else
+					context.lineTo(point.x, point.y);
+			}
+			//выводим путь на экран
+			context.stroke();
+		}
+		
+		//вызывается после загрузки body
+		function run () {
+			example1();
+			example2();
+			example3();
+		}
+	</script>
+
+<body onload="run()">
+  <canvas height='200' width='200' id='canvas1'></canvas>
+  <canvas height='200' width='200' id='canvas2'></canvas>
+  <canvas height='200' width='200' id='canvas3'></canvas>
+</body>
+</html>
